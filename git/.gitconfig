@@ -1,0 +1,47 @@
+[user]
+        email = shawn.p.wallis@gmail.com
+        name = Shawn Wallis
+[alias]
+    # Shorthands
+        st = !git status
+        stat = !git status
+        co = !git checkout
+        cob = !git checkout -b ${1}
+        ci = !git commit ${@:2}
+        ai = !git add -p ${@:2}
+        rbi = !git rebase -i ${@:2}
+        rbc = !git rebase --continue
+	rba = !git rebase --abort
+
+    # List all local branches that have been squash-merged remotely
+        squashed-ls = "!f() { git checkout -q master && git for-each-ref refs/heads/ \"--format=%(refname:short)\" | while read branch; do mergeBase=$(git merge-base master $branch) && [[ $(git cherry master $(git commit-tree $(git rev-parse $branch^{tree}) -p $mergeBase -m _)) == \"-\"* ]] && echo \"$branch is merged into master and can be deleted\"; done; }; f"
+    # Remove local branches that have been squash-merged remotely
+        squashed-rm = "!f() { git checkout -q master && git for-each-ref refs/heads/ \"--format=%(refname:short)\" | while read branch; do mergeBase=$(git merge-base master $branch) && [[ $(git cherry master $(git commit-tree $(git rev-parse $branch^{tree}) -p $mergeBase -m _)) == \"-\"* ]] && git branch -D $branch; done; }; f"
+    # Upstream merge
+        umerge = !"git fetch origin -v && git fetch upstream -v && git merge upstream/master"
+    # Push the current branch to origin and set it to track locally
+        publish = "!git push -u origin $(git bname)"
+
+    # Unsstage all staged items
+        unstage = reset HEAD --
+    # Pop off last commit and leave unstaged
+        undo = !git reset HEAD~1
+    # Pop off last commit and throw away
+        undof = !git reset --hard HEAD~1
+    # Show the spread of commits between two given branches, "base" (first arg) and "compare" (second arg)
+        spread = "!f() { echo \"Distance (in commits) from '${2}' to '${1}':\"; echo \"Behind  Ahead\"; git rev-list --left-right --count ${1}...${2}; }; f"
+
+    # Add changes onto latest commit without changing the commit message
+        rider = !git commit --amend --no-edit
+    # Add changes onto latest commit and change commit message
+        amend = !git commit --amend
+    # Remove a single commit (matching a given SHA) from a branch
+        cherry-pit = "!f() { git rebase --rebase-merges --onto ${1}^ ${1}; }; f"
+    # Remove a single commit and put it at HEAD
+        cherry-on-top = "!f() { git rebase --rebase-merges --onto ${1}^ ${1} && git cherry-pick ${1}; }; f"
+    # Chmod file as commit
+        chmod = !git update-index --chmod=+x ${1}
+
+    # Show one-line log of commits
+        log-short = !git --no-pager log --pretty=oneline --abbrev-commit ${@:2}
+
