@@ -9,6 +9,9 @@
       rbc = !git rebase --continue
       rba = !git rebase --abort
 
+  # Branches
+      bname = !git rev-parse --abbrev-ref HEAD
+
   # List all local branches that have been squash-merged remotely
       squashed-ls = "!f() { git checkout -q master && git for-each-ref refs/heads/ \"--format=%(refname:short)\" | while read branch; do mergeBase=$(git merge-base master $branch) && [[ $(git cherry master $(git commit-tree $(git rev-parse $branch^{tree}) -p $mergeBase -m _)) == \"-\"* ]] && echo \"$branch is merged into master and can be deleted\"; done; }; f"
   # Remove local branches that have been squash-merged remotely
